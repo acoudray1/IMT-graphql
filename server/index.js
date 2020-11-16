@@ -34,6 +34,7 @@ const typeDefs = gql`
 		id: ID!
 		name: String
 		description: String
+		tagline: String
 	}
 `
 
