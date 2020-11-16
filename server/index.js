@@ -30,6 +30,11 @@ class BeersAPI extends RESTDataSource {
 		this.favorites[id] = false
 		return this.getBeer(id)
 	}
+
+	getFavorites() {
+		const beers = this.getBeers()
+		return Array.filter(beers, beer => beer.favorite)
+	}
 }
 
 const typeDefs = gql`
@@ -39,6 +44,7 @@ const typeDefs = gql`
         flag: Boolean
 		beer(id: ID!): Beer
 		beers: [Beer!]
+		favorites: [Beer]
     }
 
 	type Mutation {
@@ -65,7 +71,8 @@ const resolvers = {
 		n: () => Math.round(Math.random()*100),
 		flag: () => true,
 		beer: (_, { id }, { dataSources: { beersAPI } }) => beersAPI.getBeer(id),
-		beers: (_, __, { dataSources: { beersAPI } }) => beersAPI.getBeers()
+		beers: (_, __, { dataSources: { beersAPI } }) => beersAPI.getBeers(),
+		favorites: (_, __, { dataSources: { beersAPI } }) => beersAPI.getFavorites()
 	},
 	Mutation: {
 		addFavorite: (_, { id }, { dataSources: { beersAPI } }) => beersAPI.addFavorite(id),
