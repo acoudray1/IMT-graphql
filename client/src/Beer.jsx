@@ -32,10 +32,36 @@ export function Beer() {
     },
   )
 
+  const [deleteFromFavorite, { loading: deleteFavoriteLoading }] = useMutation(
+    gql`
+      mutation($beerId: ID!) {
+        deleteFavorite(id: $beerId) {
+          id, favorite
+        }
+      }
+    `,
+    {
+      variables: { beerId }, pollInterval: 10000,
+    },
+  )
+
   if (loading) return 'Loading...'
   if (error) return `${error}`
 
   const { beer } = data
+  let onclickFav
+  let loadingFav
+  let charFav
+
+  if (beer.favorite) {
+    onclickFav = deleteFromFavorite
+    loadingFav = deleteFavoriteLoading
+    charFav = '⭐️'
+  } else {
+    onclickFav = addToFavorite
+    loadingFav = addFavoriteLoading
+    charFav = '⛈'
+  }
 
   return (
     <>
@@ -48,10 +74,7 @@ export function Beer() {
         {beer.description}
       </p>
 
-      <Button onClick={addToFavorite} loading={addFavoriteLoading}>Ajouter aux favoris</Button>
-      <p>
-        {beer.favorite ? '⭐️' : ''}
-      </p>
+      <Button onClick={onclickFav} loading={loadingFav}>{charFav}</Button>
     </>
   )
 }

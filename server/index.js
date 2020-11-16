@@ -25,6 +25,11 @@ class BeersAPI extends RESTDataSource {
 		this.favorites[id] = true
 		return this.getBeer(id)
 	}
+
+	deleteFavorite(id) {
+		this.favorites[id] = false
+		return this.getBeer(id)
+	}
 }
 
 const typeDefs = gql`
@@ -38,6 +43,7 @@ const typeDefs = gql`
 
 	type Mutation {
 		addFavorite(id: ID!): Beer
+		deleteFavorite(id: ID!): Beer
 	}
 
 	type Beer {
@@ -62,7 +68,8 @@ const resolvers = {
 		beers: (_, __, { dataSources: { beersAPI } }) => beersAPI.getBeers()
 	},
 	Mutation: {
-		addFavorite: (_, { id }, { dataSources: { beersAPI } }) => beersAPI.addFavorite(id)
+		addFavorite: (_, { id }, { dataSources: { beersAPI } }) => beersAPI.addFavorite(id),
+		deleteFavorite: (_, { id }, { dataSources: { beersAPI } }) => beersAPI.deleteFavorite(id)
 	},
 	Beer: {
 		favorite: (parent, __, { dataSources: { beersAPI } }) => beersAPI.favorites[parent.id]

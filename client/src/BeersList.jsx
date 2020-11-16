@@ -8,7 +8,7 @@ export function BeerList() {
     gql`
       query {
         beers {
-          id, name, tagline
+          id, name, tagline, favorite
         }
       }
     `,
@@ -28,6 +28,7 @@ export function BeerList() {
           <List.Item.Meta
             title={<Link to={`/beers/${beer.id}`}>{beer.name}</Link>}
             description={beer.tagline}
+            avatar={beer.favorite ? '⭐️' : '⛈'}
           />
         </List.Item>
       )}
