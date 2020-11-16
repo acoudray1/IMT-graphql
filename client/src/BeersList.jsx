@@ -1,12 +1,23 @@
 import { List } from 'antd'
 import { Link } from 'react-router-dom'
+import { gql, useQuery } from '@apollo/client'
 
 export function BeerList() {
   // TODO: Replace me by appropriate useQuery call
-  const beers = [
-    { id: 1, name: 'Une biere' },
-    { id: 2, name: 'Une deuxième bière' },
-  ]
+  const { data, loading, error } = useQuery(
+    gql`
+      query {
+        beers {
+          id, name, tagline
+        }
+      }
+    `,
+  )
+
+  if (loading) return 'Loading...'
+  if (error) return `${error}`
+
+  const { beers } = data
 
   return (
     <List
