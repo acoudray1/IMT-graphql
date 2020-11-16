@@ -1,5 +1,6 @@
 import { useParams } from 'react-router-dom'
-import { gql, useQuery } from '@apollo/client'
+import { gql, useQuery, useMutation } from '@apollo/client'
+import { Button } from 'antd'
 
 export function Beer() {
   const { beerId } = useParams()
@@ -9,12 +10,25 @@ export function Beer() {
     gql`
       query($beerId: ID!) {
         beer(id: $beerId) {
-          id, name, description, tagline
+          id, name, description, tagline, favorite
         }
       }
     `,
     {
       variables: { beerId },
+    },
+  )
+
+  const [addToFavorite, { loading: addFavoriteLoading }] = useMutation(
+    gql`
+      mutation($beerId: ID!) {
+        addFavorite(id: $beerId) {
+          id, favorite
+        }
+      }
+    `,
+    {
+      variables: { beerId }, pollInterval: 10000,
     },
   )
 
@@ -32,6 +46,11 @@ export function Beer() {
 
       <p>
         {beer.description}
+      </p>
+
+      <Button onClick={addToFavorite} loading={addFavoriteLoading}>Ajouter aux favoris</Button>
+      <p>
+        {beer.favorite ? '⭐️' : ''}
       </p>
     </>
   )

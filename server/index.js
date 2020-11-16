@@ -8,6 +8,7 @@ class BeersAPI extends RESTDataSource {
 	constructor() {
 		super()
 		this.baseURL = 'https://api.punkapi.com/v2/'
+		this.favorites = []
 	}
 
 	async getBeer(id) {
@@ -18,6 +19,11 @@ class BeersAPI extends RESTDataSource {
 	async getBeers() {
 		const result = await this.get('/beers')
 		return result
+	}
+
+	addFavorite(id) {
+		this.favorites[id] = true
+		return this.getBeer(id)
 	}
 }
 
@@ -30,11 +36,16 @@ const typeDefs = gql`
 		beers: [Beer!]
     }
 
+	type Mutation {
+		addFavorite(id: ID!): Beer
+	}
+
 	type Beer {
 		id: ID!
 		name: String
 		description: String
 		tagline: String
+		favorite: Boolean
 	}
 `
 
@@ -50,6 +61,12 @@ const resolvers = {
 		beer: (_, { id }, { dataSources: { beersAPI } }) => beersAPI.getBeer(id),
 		beers: (_, __, { dataSources: { beersAPI } }) => beersAPI.getBeers()
 	},
+	Mutation: {
+		addFavorite: (_, { id }, { dataSources: { beersAPI } }) => beersAPI.addFavorite(id)
+	},
+	Beer: {
+		favorite: (parent, __, { dataSources: { beersAPI } }) => beersAPI.favorites[parent.id]
+	}
 }
 
 const server = new ApolloServer({ typeDefs, resolvers, dataSources })
