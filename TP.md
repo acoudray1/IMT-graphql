@@ -2,6 +2,8 @@
 
 Développement d'une application de liste de bières
 
+Vrai repo : https://github.com/EmrysMyrddin/graphql-mines-2020/blob/main/README.md
+
 ## TP1 - Initialisation
 
 - Créer un package nodeJS pour le serveur
